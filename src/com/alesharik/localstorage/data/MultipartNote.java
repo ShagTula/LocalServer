@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Entity(1)
-public class MultipartNote {
+public final class MultipartNote {
     @Getter
     @Column(name = "id", primaryKey = true)
     private final UUID id;
@@ -33,27 +33,27 @@ public class MultipartNote {
 
     @Getter
     @Setter
-    @Column(name = "category", hasIndex = true, foreignKey = true, refTable = DataManager.CATEGORY_TABLE_NAME)
+    @Column(name = "category", hasIndex = true, foreignKey = true, refTable = "local_storage." + DataManager.CATEGORY_TABLE_NAME)
     private UUID category;
 
     @Getter
     @Setter
-    @Column(name = "viewers", hasIndex = true, foreignKey = true, refTable = DataManager.USER_TABLE_NAME)
+    @Column(name = "viewers", hasIndex = true)
     private UUID[] viewers;
 
     @Getter
     @Setter
-    @Column(name = "collaborators", hasIndex = true, foreignKey = true, refTable = DataManager.USER_TABLE_NAME)
+    @Column(name = "collaborators")
     private UUID[] collaborators;
 
     @Getter
     @Setter
-    @Column(name = "owner", hasIndex = true, foreignKey = true, refTable = DataManager.USER_TABLE_NAME)
+    @Column(name = "owner", hasIndex = true, foreignKey = true, refTable = "local_storage." + DataManager.USER_TABLE_NAME)
     private UUID owner;
 
     @Getter
     @Setter
-    @Column(name = "parts", hasIndex = true, foreignKey = true, refTable = DataManager.MULTIPART_NODE_PART_TABLE_NAME)
+    @Column(name = "parts", hasIndex = true)
     private UUID[] parts;
 
     @Getter

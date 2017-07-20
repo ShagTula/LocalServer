@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Entity(1)
-public class MultipartNotePart {
+public final class MultipartNotePart {
     @Getter
     @Column(name = "id", primaryKey = true)
     private final UUID id;

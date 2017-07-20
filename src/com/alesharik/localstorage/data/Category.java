@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Entity(1)
-public class Category {
+public final class Category {
     @Getter
     @Column(name = "id", primaryKey = true)
     private final UUID id;
@@ -38,17 +38,17 @@ public class Category {
 
     @Getter
     @Setter
-    @Column(name = "parent", nullable = true, hasIndex = true, foreignKey = true, refTable = DataManager.CATEGORY_TABLE_NAME)
+    @Column(name = "parent", nullable = true, hasIndex = true)
     private UUID parent;
 
     @Getter
     @Setter
-    @Column(name = "users", hasIndex = true, foreignKey = true, refTable = DataManager.USER_TABLE_NAME)
+    @Column(name = "users", hasIndex = true)
     private UUID[] users;
 
     @Getter
     @Setter
-    @Column(name = "creator", hasIndex = true, foreignKey = true, refTable = DataManager.USER_TABLE_NAME)
+    @Column(name = "creator", hasIndex = true, foreignKey = true, refTable = "local_storage." + DataManager.USER_TABLE_NAME)
     private UUID creator;
 
     public Category(UUID id) {

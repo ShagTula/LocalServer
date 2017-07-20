@@ -29,7 +29,6 @@ public class LocalStorageModule implements Module {//TODO file model
         String host = getString("host", dbConfig, true);
         String login = getString("login", dbConfig, true);
         String password = getString("password", dbConfig, true);
-        String schema = getString("schema", dbConfig, true);
 
         database = new Database(host, login, password, new PostgresDriver(), true);
         try {
@@ -37,7 +36,7 @@ public class LocalStorageModule implements Module {//TODO file model
         } catch (DatabaseConnectionFailedException e) {
             throw new ConfigurationParseError(e);
         }
-        dataManager = new DataManager(database, schema);
+        dataManager = new DataManager(database, "local_storage");
     }
 
     @Override

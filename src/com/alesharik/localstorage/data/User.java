@@ -14,7 +14,7 @@ import java.util.Base64;
 import java.util.UUID;
 
 @Entity(1)
-public class User {
+public final class User {
     @Getter
     @Column(name = "id", primaryKey = true, unique = true)
     private final UUID id;
@@ -34,11 +34,11 @@ public class User {
     @Column(name = "pass")
     private String passHash;
 
-    @Column(name = "chat_status", foreignKey = true, refTable = DataManager.CHAT_STATUS_TABLE_NAME)
+    @Column(name = "chat_status", foreignKey = true, refTable = "local_storage." + DataManager.CHAT_STATUS_TABLE_NAME)
     private UUID chatStatus;
-    @Column(name = "info_status", foreignKey = true, refTable = DataManager.INFO_STATUS_TABLE_NAME)
+    @Column(name = "info_status", foreignKey = true, refTable = "local_storage." + DataManager.INFO_STATUS_TABLE_NAME)
     private UUID infoStatus;
-    @Column(name = "private_status", foreignKey = true, refTable = DataManager.PRIVATE_STATUS_TABLE_NAME)
+    @Column(name = "private_status", foreignKey = true, refTable = "local_storage." + DataManager.PRIVATE_STATUS_TABLE_NAME)
     private UUID privateStatus;
 
     public User(UUID id, String login, String password) {

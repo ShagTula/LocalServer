@@ -8,7 +8,9 @@ import com.alesharik.localstorage.data.status.InfoStatus;
 import com.alesharik.localstorage.data.status.PrivateStatus;
 import lombok.Getter;
 
-public class DataManager {
+import java.sql.SQLException;
+
+public final class DataManager {
     public static final String USER_TABLE_NAME = "users";
     public static final String CATEGORY_TABLE_NAME = "categories";
     public static final String MULTIPART_NODE_TABLE_NAME = "multipart_notes";
@@ -37,6 +39,13 @@ public class DataManager {
     public DataManager(Database database, String schemaName) {
         if(schemaName.isEmpty())
             throw new IllegalArgumentException("DataManager must have own scheme!");
+
+        try {
+            database.getConnection().setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         this.schema = database.getSchema(schemaName, true);
 
         Table<ChatStatus> chatStatusTable = schema.getTable(CHAT_STATUS_TABLE_NAME, ChatStatus.class);
@@ -66,12 +75,18 @@ public class DataManager {
 
         Table<MultipartNotePart> multipartNotePartTable = schema.getTable(MULTIPART_NODE_PART_TABLE_NAME, MultipartNotePart.class);
         if(multipartNotePartTable == null)
-            multipartNotePartTable = database.createTable(MULTIPART_NODE_PART_TABLE_NAME, MultipartNotePart.class);
+            multipartNotePartTable = database.createTable(schemaName + '.' + MULTIPART_NODE_PART_TABLE_NAME, MultipartNotePart.class);
         this.multipartNotePartTable = multipartNotePartTable;
 
         Table<MultipartNote> multipartNoteTable = schema.getTable(MULTIPART_NODE_TABLE_NAME, MultipartNote.class);
         if(multipartNoteTable == null)
             multipartNoteTable = database.createTable(schemaName + '.' + MULTIPART_NODE_TABLE_NAME, MultipartNote.class);
         this.multipartNoteTable = multipartNoteTable;
+
+        try {
+            database.getConnection().setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
