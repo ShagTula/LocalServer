@@ -29,4 +29,5 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'com.alesharik:alesharikwebserver-api:0.1'
     compile 'com.alesharik:alesharikwebserver-main:0.1'
+    compile 'com.alesharik:alesharikwebserver-database:0.1'
 }

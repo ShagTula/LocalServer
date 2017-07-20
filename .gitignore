@@ -100,4 +100,9 @@ hs_err_pid*
 
 # AlesharikWebServer config
 /configuration.xml
+/www
+/adminData.data
+/adminKey.key
+/keyStore.store
+/test.csv
 
