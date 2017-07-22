@@ -4,11 +4,13 @@ import com.alesharik.database.entity.Column;
 import com.alesharik.database.entity.Entity;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.UUID;
 
+@EqualsAndHashCode
 @AllArgsConstructor
 @Entity(1)
 public final class PrivateStatus {

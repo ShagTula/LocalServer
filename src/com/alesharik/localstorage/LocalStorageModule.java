@@ -4,8 +4,10 @@ import com.alesharik.database.Database;
 import com.alesharik.database.exception.DatabaseConnectionFailedException;
 import com.alesharik.database.postgres.PostgresDriver;
 import com.alesharik.localstorage.data.DataManager;
+import com.alesharik.localstorage.http.MainHttpHandlerBundle;
 import com.alesharik.webserver.configuration.Layer;
 import com.alesharik.webserver.configuration.Module;
+import com.alesharik.webserver.configuration.XmlHelper;
 import com.alesharik.webserver.exceptions.error.ConfigurationParseError;
 import org.w3c.dom.Element;
 
@@ -37,6 +39,9 @@ public class LocalStorageModule implements Module {//TODO file model
             throw new ConfigurationParseError(e);
         }
         dataManager = new DataManager(database, "local_storage");
+
+        //noinspection ConstantConditions
+        XmlHelper.getHttpServer("http-server", element, true).addHttpHandlerBundle(new MainHttpHandlerBundle(dataManager));
     }
 
     @Override
@@ -48,17 +53,17 @@ public class LocalStorageModule implements Module {//TODO file model
 
     @Override
     public void start() {
-
+        //Database already started
     }
 
     @Override
     public void shutdown() {
-
+        database.disconnect();
     }
 
     @Override
     public void shutdownNow() {
-
+        database.disconnect();
     }
 
     @Nonnull

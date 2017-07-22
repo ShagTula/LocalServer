@@ -4,11 +4,15 @@ import com.alesharik.database.entity.Column;
 import com.alesharik.database.entity.Entity;
 import com.google.gson.JsonObject;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.UUID;
 
+@EqualsAndHashCode
+@ToString
 @Entity(1)
 public final class ChatStatus {
     @Getter
