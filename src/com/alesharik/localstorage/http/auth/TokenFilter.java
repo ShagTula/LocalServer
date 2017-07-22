@@ -1,8 +1,7 @@
-package com.alesharik.localstorage.http.filter;
+package com.alesharik.localstorage.http.auth;
 
 
 import com.alesharik.localstorage.http.RequestAccessLevels;
-import com.alesharik.localstorage.http.TokenHolder;
 import com.alesharik.webserver.api.server.wrapper.bundle.Filter;
 import com.alesharik.webserver.api.server.wrapper.http.HeaderManager;
 import com.alesharik.webserver.api.server.wrapper.http.HttpStatus;

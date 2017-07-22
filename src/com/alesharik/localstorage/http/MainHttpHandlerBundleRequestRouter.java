@@ -1,6 +1,6 @@
 package com.alesharik.localstorage.http;
 
-import com.alesharik.localstorage.http.chains.AuthorizationChain;
+import com.alesharik.localstorage.http.auth.AuthorizationChain;
 import com.alesharik.webserver.api.server.wrapper.bundle.FilterChain;
 import com.alesharik.webserver.api.server.wrapper.bundle.RequestRouter;
 import com.alesharik.webserver.api.server.wrapper.bundle.impl.BasicFilterChain;
@@ -11,7 +11,7 @@ final class MainHttpHandlerBundleRequestRouter implements RequestRouter {
     public FilterChain route(Request request, FilterChain[] filterChains) {
         if(request.getContextPath().equals("/api/login"))
             return selectChain(AuthorizationChain.class, filterChains);
-        else if(request.getContextPath().equals("/api"))
+        else if(request.getContextPath().startsWith("/api"))
             return selectChain(BasicFilterChain.class, filterChains);
         return null;
     }

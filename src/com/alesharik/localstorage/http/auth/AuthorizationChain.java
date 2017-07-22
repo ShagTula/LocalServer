@@ -1,4 +1,4 @@
-package com.alesharik.localstorage.http.chains;
+package com.alesharik.localstorage.http.auth;
 
 import com.alesharik.webserver.api.server.wrapper.bundle.FilterChain;
 import com.alesharik.webserver.api.server.wrapper.bundle.HttpHandler;

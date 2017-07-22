@@ -63,7 +63,7 @@ public final class ChatStatus {
         DO_NOT_DISTURB(2),
         NOT_ACTIVE(3);
 
-        @Getter(AccessLevel.PACKAGE)
+        @Getter(AccessLevel.PUBLIC)
         private final int state;
 
         OnlineStatus(int state) {

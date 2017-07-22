@@ -1,8 +1,7 @@
-package com.alesharik.localstorage.http.handler;
+package com.alesharik.localstorage.http.auth;
 
 import com.alesharik.localstorage.data.AccessLevel;
 import com.alesharik.localstorage.data.DataManager;
-import com.alesharik.localstorage.http.TokenHolder;
 import com.alesharik.webserver.api.server.wrapper.bundle.Filter;
 import com.alesharik.webserver.api.server.wrapper.bundle.HttpHandler;
 import com.alesharik.webserver.api.server.wrapper.http.HeaderManager;
@@ -66,7 +65,7 @@ public final class AuthorizationHandler implements HttpHandler {
 
         if(dataManager.checkUser(login, password)) {
             UUID token = UUID.randomUUID();
-            tokenHolder.addToken(token, parsed);
+            tokenHolder.addToken(token, parsed, dataManager.getUserForLogPass(login, password));
             String send = token.toString();
             response.respond(HttpStatus.OK_200);
             response.setContentLength(send.length());

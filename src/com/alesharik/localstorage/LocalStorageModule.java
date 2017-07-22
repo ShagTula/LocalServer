@@ -41,7 +41,7 @@ public class LocalStorageModule implements Module {//TODO file model
         dataManager = new DataManager(database, "local_storage");
 
         //noinspection ConstantConditions
-        XmlHelper.getHttpServer("http-server", element, true).addHttpHandlerBundle(new MainHttpHandlerBundle(dataManager));
+        XmlHelper.getHttpServer("http-server", element, true).addHttpHandlerBundle(new MainHttpHandlerBundle(dataManager, database));
     }
 
     @Override

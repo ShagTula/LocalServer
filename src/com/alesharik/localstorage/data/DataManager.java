@@ -102,6 +102,10 @@ public final class DataManager {
         }
     }
 
+    /**
+     * Use direct db access
+     * @return
+     */
     public boolean checkUser(String login, String password) {
         Boolean result = database.executeTransaction(() -> {
             PreparedStatement preparedStatement = null;
@@ -126,6 +130,16 @@ public final class DataManager {
             }
         });
         return result == null ? false : result;
+    }
+
+    public User getUserForLogPass(String login, String pass) {
+        Object[] arr = userTable.getEntities();
+        for(Object userObj : arr) {
+            User user = (User) userObj;
+            if(user.getLogin().equals(login) && user.passwordValid(pass))
+                return user;
+        }
+        return null;
     }
 
     public User newUser(String login, String password) {
