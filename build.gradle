@@ -1,9 +1,23 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.erizo.gradle:jcstress-gradle-plugin:0.8.1'
+    }
+}
+
 group 'com.alesharik'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'jcstress'
 
 sourceCompatibility = 1.8
+
+def isCIServer = project.hasProperty("CIServer") ? project.property("CIServer") : System.getenv("CIServer")
+def isProd = project.hasProperty("production") ? project.property("production") : System.getenv("production")
 
 sourceSets {
     main {
@@ -23,11 +37,24 @@ repositories {
     maven {
         url  "http://dl.bintray.com/alesharik/com.alesharik"
     }
+    jcenter()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
     compile 'com.alesharik:alesharikwebserver-api:0.1'
     compile 'com.alesharik:alesharikwebserver-main:0.1'
     compile 'com.alesharik:alesharikwebserver-database:0.1'
+    compile group: 'com.google.cloud', name: 'google-cloud-vision', version: '0.20.1-beta'
 }
+
+jcstress {
+    yield = true
+    if(isProd)
+        mode = 'stress'
+    else if(isCIServer)
+        mode = 'quick'
+}
+
+check.dependsOn jcstress
