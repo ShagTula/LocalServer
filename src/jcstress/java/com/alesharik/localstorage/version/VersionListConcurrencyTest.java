@@ -41,7 +41,7 @@ public final class VersionListConcurrencyTest {
         @Actor
         public void producer(AddingConsistencyState state) {
             state.count.updateAndGet(operand -> {
-                Version version = new Version(1, 1, state.counter2.getAndIncrement(), Version.Prefix.UNSTABLE, null);
+                Version version = new Version(1, 1, state.counter2.getAndIncrement(), Version.Prefix.UNSTABLE, DUDE);
                 state.versionList.addVersion(version);
                 state.versions.add(version);
                 return operand + 1;

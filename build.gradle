@@ -57,4 +57,5 @@ jcstress {
         mode = 'quick'
 }
 
-check.dependsOn jcstress
+//noinspection GroovyAssignabilityCheck
+check.dependsOn project.getTasksByName("jcstress", false)
