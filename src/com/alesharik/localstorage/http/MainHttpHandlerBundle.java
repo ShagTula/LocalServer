@@ -7,7 +7,9 @@ import com.alesharik.localstorage.http.auth.TokenFilter;
 import com.alesharik.localstorage.http.auth.AuthorizationHandler;
 import com.alesharik.localstorage.http.auth.TokenHolder;
 import com.alesharik.localstorage.http.handler.HttpGetChatStatusHandler;
+import com.alesharik.localstorage.http.handler.HttpInfoStatusHandler;
 import com.alesharik.localstorage.http.handler.HttpMeHandler;
+import com.alesharik.localstorage.http.handler.HttpPrivateStatusHandler;
 import com.alesharik.localstorage.http.handler.HttpSyncChatStatusHandler;
 import com.alesharik.localstorage.http.handler.HttpWhoHandler;
 import com.alesharik.webserver.api.server.wrapper.bundle.ErrorHandler;
@@ -64,7 +66,9 @@ public final class MainHttpHandlerBundle implements HttpHandlerBundle {
                 new HttpMeHandler(tokenHolder),
                 new HttpWhoHandler(dataManager),
                 new HttpGetChatStatusHandler(dataManager, tokenHolder),
-                new HttpSyncChatStatusHandler(database, tokenHolder, dataManager)
+                new HttpSyncChatStatusHandler(database, tokenHolder, dataManager),
+                new HttpInfoStatusHandler(dataManager, database, tokenHolder),
+                new HttpPrivateStatusHandler(database, dataManager, tokenHolder, ipBanManager)
         };
     }
 

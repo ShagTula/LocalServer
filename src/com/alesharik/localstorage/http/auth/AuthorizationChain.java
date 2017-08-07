@@ -18,7 +18,7 @@ public final class AuthorizationChain implements FilterChain {
     @Nonnull
     @Override
     public Response handleRequest(Request request, HttpHandler[] httpHandlers) {
-        Response response = new Response();
+        Response response = Response.getResponse();
         if(!ipBanManager.accept(request, response))
             return response;
 

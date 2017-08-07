@@ -6,7 +6,7 @@ import com.alesharik.localstorage.data.GsonUtils;
 import com.alesharik.localstorage.data.User;
 import com.alesharik.localstorage.data.status.ChatStatus;
 import com.alesharik.localstorage.http.auth.TokenHolder;
-import com.alesharik.webserver.api.server.wrapper.bundle.HttpHandler;
+import com.alesharik.webserver.api.server.wrapper.bundle.FilteredHttpHandler;
 import com.alesharik.webserver.api.server.wrapper.http.HeaderManager;
 import com.alesharik.webserver.api.server.wrapper.http.HttpStatus;
 import com.alesharik.webserver.api.server.wrapper.http.Method;
@@ -20,7 +20,7 @@ import com.alesharik.webserver.api.server.wrapper.http.header.ObjectHeader;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-public class HttpSyncChatStatusHandler implements HttpHandler {
+public class HttpSyncChatStatusHandler implements FilteredHttpHandler {
     private final Database database;
     private final TokenHolder tokenHolder;
     private final DataManager dataManager;
@@ -62,10 +62,19 @@ public class HttpSyncChatStatusHandler implements HttpHandler {
         String body = new String(request.getBody(), charset);
         ChatStatus chatStatus = GsonUtils.getGson().fromJson(body, ChatStatus.class);
         if(!chatStatus.getId().equals(user.getChatStatus())) {
-            response.respond(HttpStatus.BAD_REQUEST_400);
+            response.respond(HttpStatus.CONFLICT_409);
             response.setContentLength(0);
             return;
         }
-        database.executeTransaction(() -> dataManager.getChatStatusTable().update(chatStatus));
+        if(database.executeTransaction(() -> dataManager.getChatStatusTable().update(chatStatus))) {
+            response.respond(HttpStatus.ACCEPTED_202);
+        } else {
+            response.respond(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        }
+    }
+
+    @Override
+    public boolean accept(Request request, Response response) {
+        return request.getContextPath().equals("/api/status/chat/sync");
     }
 }
