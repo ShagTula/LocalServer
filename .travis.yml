@@ -10,4 +10,4 @@ cache:
 before_script:
   - chmod +x gradlew
 script:
-  - ./gradlew build
+  - ./gradlew build -PCIServer=true
