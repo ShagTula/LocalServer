@@ -8,7 +8,6 @@ import com.alesharik.database.entity.EntityManager;
 import com.alesharik.database.entity.Indexed;
 import com.alesharik.database.entity.OverrideDomain;
 import com.alesharik.database.entity.PrimaryKey;
-import com.alesharik.localstorage.avatar.AvatarModule;
 import com.google.gson.JsonObject;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -24,6 +23,8 @@ import java.util.UUID;
 @ToString
 @Entity
 public final class ChatStatus {
+    public static final String NONE_AVATAR = "none.png";
+
     @Getter
     @Column("id")
     @PrimaryKey
@@ -71,7 +72,7 @@ public final class ChatStatus {
     public static ChatStatus create(EntityManager<ChatStatus> manager, String nick) {
         ChatStatus chatStatus = new ChatStatus(UUID.randomUUID());
         chatStatus.nickName = nick;
-        chatStatus.avatarUrl = AvatarModule.NONE_AVATAR;
+        chatStatus.avatarUrl = NONE_AVATAR;
         chatStatus.data = new JsonObject();
         chatStatus.status = OnlineStatus.OFFLINE.getState();
         return chatStatus;
