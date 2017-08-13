@@ -1,8 +1,7 @@
 package com.alesharik.localstorage;
 
 import com.alesharik.database.Database;
-import com.alesharik.database.exception.DatabaseConnectionFailedException;
-import com.alesharik.database.postgres.PostgresDriver;
+import com.alesharik.database.driver.postgres.PostgresDriver;
 import com.alesharik.localstorage.data.DataManager;
 import com.alesharik.localstorage.http.MainHttpHandlerBundle;
 import com.alesharik.webserver.configuration.Layer;
@@ -13,6 +12,7 @@ import org.w3c.dom.Element;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.sql.SQLException;
 
 import static com.alesharik.webserver.configuration.XmlHelper.getString;
 import static com.alesharik.webserver.configuration.XmlHelper.getXmlElement;
@@ -32,10 +32,9 @@ public class LocalStorageModule implements Module {//TODO file model
         String login = getString("login", dbConfig, true);
         String password = getString("password", dbConfig, true);
 
-        database = new Database(host, login, password, new PostgresDriver(), true);
         try {
-            database.connect();
-        } catch (DatabaseConnectionFailedException e) {
+            database = Database.newDatabase(host, login, password, new PostgresDriver(), true);
+        } catch (SQLException e) {
             throw new ConfigurationParseError(e);
         }
         dataManager = new DataManager(database, "local_storage");
@@ -58,12 +57,20 @@ public class LocalStorageModule implements Module {//TODO file model
 
     @Override
     public void shutdown() {
-        database.disconnect();
+        try {
+            database.getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void shutdownNow() {
-        database.disconnect();
+        try {
+            database.getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Nonnull

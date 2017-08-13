@@ -66,7 +66,14 @@ public class HttpSyncChatStatusHandler implements FilteredHttpHandler {
             response.setContentLength(0);
             return;
         }
-        if(database.executeTransaction(() -> dataManager.getChatStatusTable().update(chatStatus))) {
+        if(database.getTransactionManager().executeTransaction(() -> {
+            ChatStatus db = dataManager.getChatStatusTable().selectByPrimaryKey(chatStatus);
+            db.setNickName(chatStatus.getNickName());
+            db.setOnlineStatus(chatStatus.getOnlineStatus());
+            db.setData(chatStatus.getData());
+            db.setAvatarUrl(chatStatus.getAvatarUrl());
+            return true;
+        })) {
             response.respond(HttpStatus.ACCEPTED_202);
         } else {
             response.respond(HttpStatus.INTERNAL_SERVER_ERROR_500);

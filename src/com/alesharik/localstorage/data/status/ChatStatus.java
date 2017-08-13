@@ -1,7 +1,14 @@
 package com.alesharik.localstorage.data.status;
 
 import com.alesharik.database.entity.Column;
+import com.alesharik.database.entity.Creator;
+import com.alesharik.database.entity.Destroyer;
 import com.alesharik.database.entity.Entity;
+import com.alesharik.database.entity.EntityManager;
+import com.alesharik.database.entity.Indexed;
+import com.alesharik.database.entity.OverrideDomain;
+import com.alesharik.database.entity.PrimaryKey;
+import com.alesharik.localstorage.avatar.AvatarModule;
 import com.google.gson.JsonObject;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -9,32 +16,43 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
+@SuppressWarnings("NullableProblems")
 @EqualsAndHashCode
 @ToString
-@Entity(1)
+@Entity
 public final class ChatStatus {
     @Getter
-    @Column(name = "id", primaryKey = true, unique = true)
+    @Column("id")
+    @PrimaryKey
     private final UUID id;
 
     @Getter
     @Setter
-    @Column(name = "nickname", hasIndex = true)
+    @Column("nickname")
+    @OverrideDomain("varchar(30)")
+    @Indexed
+    @Nonnull
     private String nickName;
 
     @Getter
     @Setter
-    @Column(name = "avatar")
+    @Column("avatar")
+    @Nonnull
     private String avatarUrl;
 
     @Getter
     @Setter
-    @Column(name = "data")
+    @Column("data")
+    @Nonnull
     private JsonObject data;
 
-    @Column(name = "status")
+    @Column("status")
+    @Nonnull
+    @Getter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PRIVATE)
     private int status;
 
     public ChatStatus(UUID id) {
@@ -49,12 +67,25 @@ public final class ChatStatus {
         this.status = status.getState();
     }
 
-    public OnlineStatus getStatus() {
-        return OnlineStatus.forState(status);
+    @Creator
+    public static ChatStatus create(EntityManager<ChatStatus> manager, String nick) {
+        ChatStatus chatStatus = new ChatStatus(UUID.randomUUID());
+        chatStatus.nickName = nick;
+        chatStatus.avatarUrl = AvatarModule.NONE_AVATAR;
+        chatStatus.data = new JsonObject();
+        chatStatus.status = OnlineStatus.OFFLINE.getState();
+        return chatStatus;
+    }
+
+    @Destroyer
+    public void delete() {}
+
+    public OnlineStatus getOnlineStatus() {
+        return OnlineStatus.forState(getStatus());
     }
 
     public void setOnlineStatus(OnlineStatus status) {
-        this.status = status.getState();
+        setStatus(status.getState());
     }
 
     public enum OnlineStatus {

@@ -1,7 +1,18 @@
 package com.alesharik.localstorage.data;
 
+import com.alesharik.database.data.Table;
 import com.alesharik.database.entity.Column;
+import com.alesharik.database.entity.Destroyer;
 import com.alesharik.database.entity.Entity;
+import com.alesharik.database.entity.EntityManager;
+import com.alesharik.database.entity.ForeignKey;
+import com.alesharik.database.entity.Indexed;
+import com.alesharik.database.entity.OverrideDomain;
+import com.alesharik.database.entity.PrimaryKey;
+import com.alesharik.database.entity.Unique;
+import com.alesharik.localstorage.data.status.ChatStatus;
+import com.alesharik.localstorage.data.status.InfoStatus;
+import com.alesharik.localstorage.data.status.PrivateStatus;
 import com.alesharik.webserver.api.StringCipher;
 import com.google.gson.JsonObject;
 import lombok.EqualsAndHashCode;
@@ -9,49 +20,84 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.annotation.Nonnull;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.UUID;
 
+@SuppressWarnings("NullableProblems")
 @EqualsAndHashCode
 @ToString
-@Entity(1)
+@Entity
 public final class User {
     @Getter
-    @Column(name = "id", primaryKey = true, unique = true)
+    @Column("id")
+    @PrimaryKey
     private final UUID id;
 
     @Getter
     @Setter
-    @Column(name = "login", hasIndex = true, unique = true)
+    @Column("login")
+    @Indexed
+    @Unique
+    @OverrideDomain("varchar(30)")
+    @Nonnull
     private String login;
 
     @Getter
     @Setter
-    @Column(name = "data")
+    @Column("data")
+    @Nonnull
     private JsonObject data;
 
-    @Column(name = "salt")
+    @Column("salt")
+    @Nonnull
     private String salt;
-    @Column(name = "pass")
+    @Column("pass")
+    @Nonnull
     private String passHash;
 
     @Getter
     @Setter
-    @Column(name = "chat_status", foreignKey = true, refTable = "local_storage." + DataManager.CHAT_STATUS_TABLE_NAME)
+    @Column("chat_status")
+    @ForeignKey("local_storage." + DataManager.CHAT_STATUS_TABLE_NAME)
+    @Nonnull
     private UUID chatStatus;
 
     @Getter
     @Setter
-    @Column(name = "info_status", foreignKey = true, refTable = "local_storage." + DataManager.INFO_STATUS_TABLE_NAME)
+    @Column("info_status")
+    @ForeignKey("local_storage." + DataManager.INFO_STATUS_TABLE_NAME)
+    @Nonnull
     private UUID infoStatus;
 
     @Getter
     @Setter
-    @Column(name = "private_status", foreignKey = true, refTable = "local_storage." + DataManager.PRIVATE_STATUS_TABLE_NAME)
+    @Column("private_status")
+    @ForeignKey("local_storage." + DataManager.PRIVATE_STATUS_TABLE_NAME)
+    @Nonnull
     private UUID privateStatus;
+
+    public static User create(EntityManager<User> manager, String login, String password, EntityManager<ChatStatus> chatStatusManager, EntityManager<InfoStatus> infoStatusEntityManager, EntityManager<PrivateStatus> privateStatusEntityManager) {
+        ChatStatus chatStatus = ChatStatus.create(chatStatusManager, login);
+        InfoStatus infoStatus = InfoStatus.create(infoStatusEntityManager);
+        PrivateStatus privateStatus = PrivateStatus.create(privateStatusEntityManager);
+        User user = new User(UUID.randomUUID(), login, password);
+        user.chatStatus = chatStatus.getId();
+        user.infoStatus = infoStatus.getId();
+        user.privateStatus = privateStatus.getId();
+        user.data = new JsonObject();
+        return user;
+    }
+
+    @Destroyer
+    public void delete(Table<ChatStatus> chatStatusManager, Table<InfoStatus> infoStatusEntityManager, Table<PrivateStatus> privateStatusEntityManager) {
+        chatStatusManager.selectByPrimaryKey(new ChatStatus(chatStatus)).delete();
+        infoStatusEntityManager.selectByPrimaryKey(new InfoStatus(infoStatus)).delete();
+        privateStatusEntityManager.selectByPrimaryKey(new PrivateStatus(privateStatus)).delete();
+    }
 
     public User(UUID id, String login, String password) {
         this.id = id;

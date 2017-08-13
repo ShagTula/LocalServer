@@ -37,7 +37,7 @@ public class HttpGetChatStatusHandler implements HttpHandler, Filter {
 
         if(request.getParameters().containsKey("id")) {
             UUID id = UUID.fromString(request.getParameter("id"));
-            ChatStatus chatStatus = dataManager.getChatStatusTable().selectForKey(new ChatStatus(id));
+            ChatStatus chatStatus = dataManager.getChatStatusTable().selectByPrimaryKey(new ChatStatus(id));
             if(chatStatus == null) {
                 response.setContentLength(0);
                 response.respond(HttpStatus.NOT_FOUND_404);
@@ -59,7 +59,7 @@ public class HttpGetChatStatusHandler implements HttpHandler, Filter {
             return;
         }
 
-        ChatStatus chatStatus = dataManager.getChatStatusTable().selectForKey(new ChatStatus(user.getChatStatus()));
+        ChatStatus chatStatus = dataManager.getChatStatusTable().selectByPrimaryKey(new ChatStatus(user.getChatStatus()));
         String text = GsonUtils.getGson().toJson(chatStatus);
         response.respond(HttpStatus.OK_200);
         response.setContentLength(text.length());

@@ -49,6 +49,10 @@ dependencies {
     compile group: 'com.google.cloud', name: 'google-cloud-vision', version: '0.20.1-beta'
 }
 
+jar {
+    manifest {}
+}
+
 jcstress {
     yield = true
     if(isProd)

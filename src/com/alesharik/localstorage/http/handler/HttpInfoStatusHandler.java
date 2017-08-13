@@ -64,7 +64,15 @@ public class HttpInfoStatusHandler implements FilteredHttpHandler {
                 return;
             }
 
-            if(database.executeTransaction(() -> dataManager.getInfoStatusTable().update(infoStatus))) {
+            if(database.getTransactionManager().executeTransaction(() -> {
+                InfoStatus db = dataManager.getInfoStatusTable().selectByPrimaryKey(infoStatus);
+                db.setData(infoStatus.getData());
+                db.setBirthday(infoStatus.getBirthday());
+                db.setPatronymic(infoStatus.getPatronymic());
+                db.setLastName(infoStatus.getLastName());
+                db.setFirstName(infoStatus.getFirstName());
+                return true;
+            })) {
                 response.respond(HttpStatus.ACCEPTED_202);
                 response.setContentLength(0);
             } else {
@@ -72,7 +80,7 @@ public class HttpInfoStatusHandler implements FilteredHttpHandler {
                 response.setContentLength(0);
             }
         } else if(request.getMethod() == Method.GET) {
-            InfoStatus status = dataManager.getInfoStatusTable().selectForKey(new InfoStatus(user.getInfoStatus()));
+            InfoStatus status = dataManager.getInfoStatusTable().selectByPrimaryKey(new InfoStatus(user.getInfoStatus()));
             String text = GsonUtils.getGson().toJson(status);
             response.respond(HttpStatus.OK_200);
             response.setContentLength(text.length());

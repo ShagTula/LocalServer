@@ -36,7 +36,7 @@ public class HttpWhoHandler implements HttpHandler, Filter {
             return;
         }
         UUID userId = UUID.fromString(request.getParameter("id"));
-        User user = dataManager.getUserTable().selectForKey(new User(userId));
+        User user = dataManager.getUserTable().selectByPrimaryKey(new User(userId));
         user.setInfoStatus(randomUUID);
         user.setPrivateStatus(randomUUID);
         String text = GsonUtils.getGson().toJson(user);

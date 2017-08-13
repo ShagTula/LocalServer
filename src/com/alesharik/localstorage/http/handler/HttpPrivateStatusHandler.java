@@ -75,13 +75,18 @@ public class HttpPrivateStatusHandler implements FilteredHttpHandler {
                 ipBanManager.ban(request.getRemote().getAddress());
                 return;
             }
-            if(!database.executeTransaction(() -> dataManager.getPrivateStatusTable().update(privateStatus))) {
+            if(!database.getTransactionManager().executeTransaction(() -> {
+                PrivateStatus db = dataManager.getPrivateStatusTable().selectByPrimaryKey(privateStatus);
+                db.setData(privateStatus.getData());
+                db.setPhone(privateStatus.getPhone());
+                return true;
+            })) {
                 response.respond(HttpStatus.INTERNAL_SERVER_ERROR_500);
             } else {
                 response.respond(HttpStatus.ACCEPTED_202);
             }
         } else if(request.getMethod() == Method.GET) {
-            PrivateStatus privateStatus = dataManager.getPrivateStatusTable().selectForKey(new PrivateStatus(user.getPrivateStatus()));
+            PrivateStatus privateStatus = dataManager.getPrivateStatusTable().selectByPrimaryKey(new PrivateStatus(user.getPrivateStatus()));
             String text = GsonUtils.getGson().toJson(privateStatus);
             response.respond(HttpStatus.OK_200);
             response.setContentLength(text.length());

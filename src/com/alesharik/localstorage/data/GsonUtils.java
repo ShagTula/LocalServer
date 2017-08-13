@@ -94,7 +94,7 @@ public class GsonUtils {
             jsonObject.add("nickName", new JsonPrimitive(src.getNickName()));
             jsonObject.add("avatarUrl", new JsonPrimitive(src.getAvatarUrl()));
             jsonObject.add("data", src.getData());
-            jsonObject.add("onlineStatus", new JsonPrimitive(src.getStatus().getState()));
+            jsonObject.add("onlineStatus", new JsonPrimitive(src.getOnlineStatus().getState()));
             return jsonObject;
         }
     }

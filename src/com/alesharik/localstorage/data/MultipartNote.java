@@ -1,7 +1,14 @@
 package com.alesharik.localstorage.data;
 
 import com.alesharik.database.entity.Column;
+import com.alesharik.database.entity.Creator;
+import com.alesharik.database.entity.Destroyer;
 import com.alesharik.database.entity.Entity;
+import com.alesharik.database.entity.EntityManager;
+import com.alesharik.database.entity.ForeignKey;
+import com.alesharik.database.entity.Indexed;
+import com.alesharik.database.entity.OverrideDomain;
+import com.alesharik.database.entity.PrimaryKey;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -9,63 +16,98 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+@SuppressWarnings("NullableProblems")
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
-@Entity(1)
+@Entity
 public final class MultipartNote {
     @Getter
-    @Column(name = "id", primaryKey = true)
+    @Column("id")
+    @PrimaryKey
     private final UUID id;
 
     @Getter
     @Setter
-    @Column(name = "name")
+    @Column("name")
+    @OverrideDomain("varchar(50)")
+    @Nonnull
     private String name;
 
     @Getter
     @Setter
-    @Column(name = "description")
+    @Column("description")
+    @Nonnull
     private String description;
 
     @Getter
     @Setter
-    @Column(name = "public", hasIndex = true)
+    @Column("public")
+    @Indexed
+    @Nonnull
     private boolean isPublic;
 
     @Getter
     @Setter
-    @Column(name = "category", hasIndex = true, foreignKey = true, refTable = "local_storage." + DataManager.CATEGORY_TABLE_NAME)
+    @Column("category")
+    @Indexed
+    @ForeignKey("local_storage." + DataManager.CATEGORY_TABLE_NAME)
+    @Nonnull
     private UUID category;
 
     @Getter
     @Setter
-    @Column(name = "viewers", hasIndex = true)
-    private UUID[] viewers;
+    @Column("viewers")
+    @ForeignKey("local_storage." + DataManager.USER_TABLE_NAME)
+    private Collection<UUID> viewers;
 
     @Getter
     @Setter
-    @Column(name = "collaborators")
-    private UUID[] collaborators;
+    @ForeignKey("local_storage." + DataManager.USER_TABLE_NAME)
+    private Collection<UUID> collaborators;
 
     @Getter
     @Setter
-    @Column(name = "owner", hasIndex = true, foreignKey = true, refTable = "local_storage." + DataManager.USER_TABLE_NAME)
+    @Column("owner")
+    @ForeignKey("local_storage." + DataManager.USER_TABLE_NAME)
+    @Indexed
+    @Nonnull
     private UUID owner;
 
     @Getter
     @Setter
-    @Column(name = "parts", hasIndex = true)
-    private UUID[] parts;
+    @Column("parts")
+    private Collection<UUID> parts;
 
     @Getter
     @Setter
-    @Column(name = "history")
-    private JsonObject[] history;
+    @Column("history")
+    private Collection<JsonObject> history;
 
     public MultipartNote(UUID id) {
         this.id = id;
     }
+
+    @Creator
+    public static MultipartNote create(EntityManager<MultipartNote> entityManager, String name, Category category, User owner) {
+        MultipartNote multipartNote = new MultipartNote(UUID.randomUUID());
+        multipartNote.name = name;
+        multipartNote.description = "";
+        multipartNote.isPublic = false;
+        multipartNote.category = category.getId();
+        multipartNote.viewers = new CopyOnWriteArrayList<>();
+        multipartNote.collaborators = new CopyOnWriteArrayList<>();
+        multipartNote.owner = owner.getId();
+        multipartNote.parts = new CopyOnWriteArrayList<>();
+        multipartNote.history = new CopyOnWriteArrayList<>();
+        return multipartNote;
+    }
+
+    @Destroyer
+    public void delete() {}
 }

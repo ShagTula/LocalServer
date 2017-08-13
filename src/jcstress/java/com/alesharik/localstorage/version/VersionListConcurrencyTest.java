@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public final class VersionListConcurrencyTest {
+public class VersionListConcurrencyTest {
 
     @SuppressWarnings("WeakerAccess")
     @State
@@ -30,7 +30,7 @@ public final class VersionListConcurrencyTest {
     @Outcome(id = "1, 1, true, false", expect = Expect.ACCEPTABLE_INTERESTING, desc = "Some desynchronization")
     @Outcome(id = "1, 1, false, false", expect = Expect.ACCEPTABLE_INTERESTING, desc = "Some desynchronization and values are not all consistent")
     @Outcome(expect = Expect.FORBIDDEN, desc = "Inconsistent state!")
-    public static final class AddingConsistencyTest {
+    public static class AddingConsistencyTest {
         private static final File DUDE = new File("") {
             @Override
             public boolean delete() {
