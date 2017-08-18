@@ -4,6 +4,7 @@ import com.alesharik.database.Database;
 import com.alesharik.database.data.EntityPreparedStatement;
 import com.alesharik.database.data.Schema;
 import com.alesharik.database.data.Table;
+import com.alesharik.database.transaction.Transaction;
 import com.alesharik.localstorage.data.status.ChatStatus;
 import com.alesharik.localstorage.data.status.InfoStatus;
 import com.alesharik.localstorage.data.status.PrivateStatus;
@@ -44,15 +45,24 @@ public final class DataManager {
         if(schemaName.isEmpty())
             throw new IllegalArgumentException("DataManager must have own scheme!");
 
-        this.schema = database.getSchema(schemaName, true);
+        Transaction transaction = database.getTransactionManager().newTransaction();
+        try {
+            this.schema = database.getSchema(schemaName, true);
 
-        this.chatStatusTable = schema.getTable(CHAT_STATUS_TABLE_NAME, true, ChatStatus.class);
-        this.infoStatusTable = schema.getTable(INFO_STATUS_TABLE_NAME, true, InfoStatus.class);
-        this.privateStatusTable = schema.getTable(PRIVATE_STATUS_TABLE_NAME, true, PrivateStatus.class);
-        this.userTable = schema.getTable(USER_TABLE_NAME, true, User.class);
-        this.categoryTable = schema.getTable(CATEGORY_TABLE_NAME, true, Category.class);
-        this.multipartNotePartTable = schema.getTable(MULTIPART_NODE_PART_TABLE_NAME, true, MultipartNotePart.class);
-        this.multipartNoteTable = schema.getTable(MULTIPART_NODE_TABLE_NAME, true, MultipartNote.class);
+            this.chatStatusTable = schema.getTable(CHAT_STATUS_TABLE_NAME, true, ChatStatus.class);
+            this.infoStatusTable = schema.getTable(INFO_STATUS_TABLE_NAME, true, InfoStatus.class);
+            this.privateStatusTable = schema.getTable(PRIVATE_STATUS_TABLE_NAME, true, PrivateStatus.class);
+            this.userTable = schema.getTable(USER_TABLE_NAME, true, User.class);
+            this.categoryTable = schema.getTable(CATEGORY_TABLE_NAME, true, Category.class);
+            this.multipartNotePartTable = schema.getTable(MULTIPART_NODE_PART_TABLE_NAME, true, MultipartNotePart.class);
+            this.multipartNoteTable = schema.getTable(MULTIPART_NODE_TABLE_NAME, true, MultipartNote.class);
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        } finally {
+            if(!transaction.isRolledBack())
+                transaction.commit();
+        }
     }
 
     public boolean checkUser(String login, String password) {

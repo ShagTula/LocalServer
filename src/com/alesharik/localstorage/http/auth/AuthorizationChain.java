@@ -2,6 +2,7 @@ package com.alesharik.localstorage.http.auth;
 
 import com.alesharik.webserver.api.server.wrapper.bundle.FilterChain;
 import com.alesharik.webserver.api.server.wrapper.bundle.HttpHandler;
+import com.alesharik.webserver.api.server.wrapper.bundle.HttpHandlerResponseDecorator;
 import com.alesharik.webserver.api.server.wrapper.http.Request;
 import com.alesharik.webserver.api.server.wrapper.http.Response;
 import com.alesharik.webserver.api.server.wrapper.http.util.IpBanManager;
@@ -17,7 +18,7 @@ public final class AuthorizationChain implements FilterChain {
 
     @Nonnull
     @Override
-    public Response handleRequest(Request request, HttpHandler[] httpHandlers) {
+    public Response handleRequest(Request request, HttpHandler[] httpHandlers, HttpHandlerResponseDecorator decorator) {
         Response response = Response.getResponse();
         if(!ipBanManager.accept(request, response))
             return response;

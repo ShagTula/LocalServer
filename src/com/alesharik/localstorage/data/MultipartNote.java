@@ -7,9 +7,9 @@ import com.alesharik.database.entity.Entity;
 import com.alesharik.database.entity.EntityManager;
 import com.alesharik.database.entity.ForeignKey;
 import com.alesharik.database.entity.Indexed;
+import com.alesharik.database.entity.Lazy;
 import com.alesharik.database.entity.OverrideDomain;
 import com.alesharik.database.entity.PrimaryKey;
-import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @ToString
 @AllArgsConstructor
 @Entity
+@Lazy
 public final class MultipartNote {
     @Getter
     @Column("id")
@@ -50,7 +51,7 @@ public final class MultipartNote {
     @Column("public")
     @Indexed
     @Nonnull
-    private boolean isPublic;
+    private Boolean isPublic;
 
     @Getter
     @Setter
@@ -84,10 +85,13 @@ public final class MultipartNote {
     @Column("parts")
     private Collection<UUID> parts;
 
+    /**
+     * Strings are actually json objects
+     */
     @Getter
     @Setter
     @Column("history")
-    private Collection<JsonObject> history;
+    private Collection<String> history;
 
     public MultipartNote(UUID id) {
         this.id = id;

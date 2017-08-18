@@ -194,4 +194,26 @@ public final class VersionList {
         }
         return contains;
     }
+
+    public Version getVersion(Version version) {
+        long lock = stampedLock.tryOptimisticRead();
+        Version ret = getVersionInternal(version);
+        if(!stampedLock.validate(lock)) {
+            lock = stampedLock.readLock();
+            try {
+                ret = getVersionInternal(version);
+            } finally {
+                stampedLock.unlockRead(lock);
+            }
+        }
+        return ret;
+    }
+
+    private Version getVersionInternal(Version version) {
+        for(Version version1 : versions) {
+            if(version.equals(version1))
+                return version1;
+        }
+        return null;
+    }
 }

@@ -107,3 +107,6 @@ hs_err_pid*
 /test.csv
 /logs
 /plugins
+
+# Some test folders
+/versions

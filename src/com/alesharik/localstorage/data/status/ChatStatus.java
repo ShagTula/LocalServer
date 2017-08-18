@@ -54,7 +54,7 @@ public final class ChatStatus {
     @Nonnull
     @Getter(AccessLevel.PRIVATE)
     @Setter(AccessLevel.PRIVATE)
-    private int status;
+    private Integer status;
 
     public ChatStatus(UUID id) {
         this.id = id;

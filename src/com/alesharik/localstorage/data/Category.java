@@ -55,7 +55,7 @@ public final class Category {
     @Column("public")
     @Indexed
     @Nonnull
-    private boolean isPublic;
+    private Boolean isPublic;
 
     @Getter
     @Setter

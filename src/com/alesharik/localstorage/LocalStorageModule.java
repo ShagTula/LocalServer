@@ -33,6 +33,7 @@ public class LocalStorageModule implements Module {//TODO file model
         String password = getString("password", dbConfig, true);
 
         try {
+            assert host != null;
             database = Database.newDatabase(host, login, password, new PostgresDriver(), true);
         } catch (SQLException e) {
             throw new ConfigurationParseError(e);
