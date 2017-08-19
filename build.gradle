@@ -5,6 +5,7 @@ buildscript {
 
     dependencies {
         classpath 'com.github.erizo.gradle:jcstress-gradle-plugin:0.8.1'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
     }
 }
 
@@ -13,6 +14,7 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'jcstress'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = 1.8
 
@@ -43,8 +45,8 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
-    compile 'com.alesharik:alesharikwebserver-api:0.1'
-    compile 'com.alesharik:alesharikwebserver-main:0.1'
+    shadow 'com.alesharik:alesharikwebserver-api:0.1'
+    shadow 'com.alesharik:alesharikwebserver-main:0.1'
     compile 'com.alesharik:alesharikwebserver-database:0.1'
     compile group: 'com.google.cloud', name: 'google-cloud-vision', version: '0.20.1-beta'
 }
@@ -59,6 +61,12 @@ jcstress {
         mode = 'stress'
     else if(isCIServer)
         mode = 'quick'
+}
+
+shadowJar {
+    baseName = 'localstorage-shadow'
+    classifier = null
+    version = null
 }
 
 //noinspection GroovyAssignabilityCheck
