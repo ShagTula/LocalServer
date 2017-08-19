@@ -1,5 +1,6 @@
 package com.alesharik.localstorage.version;
 
+import com.alesharik.webserver.configuration.SubModule;
 import com.alesharik.webserver.logger.Prefixes;
 import org.apache.commons.io.FilenameUtils;
 
@@ -19,7 +20,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * This thread scans version folder for new versions and update {@link VersionList}
  */
 @Prefixes({"[LocalStorage]", "[ClientVersioning]", "[VersionScannerThread]"})
-final class VersionScannerThread extends Thread {
+final class VersionScannerThread extends Thread implements SubModule {
     private final File file;
     private final VersionList versionList;
 
@@ -131,6 +132,11 @@ final class VersionScannerThread extends Thread {
         System.out.println("Version " + version.toVersionString() + " successfully removed!");
     }
 
+    @Override
+    public void shutdownNow() {
+        shutdown();
+    }
+
     public void shutdown() {
         if(isRunning) {
             try {
@@ -140,5 +146,10 @@ final class VersionScannerThread extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public boolean isRunning() {
+        return isRunning;
     }
 }
