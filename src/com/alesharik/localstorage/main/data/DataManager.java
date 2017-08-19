@@ -23,6 +23,7 @@ public final class DataManager {
     public static final String PRIVATE_STATUS_TABLE_NAME = "private_statuses";
 
     private final Schema schema;
+    @Getter
     private final Database database;
 
     @Getter

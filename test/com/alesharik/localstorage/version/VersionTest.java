@@ -1,25 +1,27 @@
 package com.alesharik.localstorage.version;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VersionTest {
-    private static final File fake;
+    private File fake;
 
-    static {
-        try {
-            fake = File.createTempFile("AlesharikWebServer", "asdf");
-            fake.deleteOnExit();
-        } catch (IOException e) {
-            throw new Error(e);
-        }
+    @Before
+    public void setUp() throws Exception {
+        fake = File.createTempFile("AlesharikWebServer", "asdf");
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        assertTrue(fake.delete());
     }
 
     @Test

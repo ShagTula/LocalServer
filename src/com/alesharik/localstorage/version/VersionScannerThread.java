@@ -24,15 +24,14 @@ final class VersionScannerThread extends Thread implements SubModule {
     private final File file;
     private final VersionList versionList;
 
-    private volatile boolean isRunning = false;
+    private volatile boolean isRunning; //False
     private volatile WatchService watchService;
 
     public VersionScannerThread(File file, VersionList versionList) {
         if(file.isFile())
             throw new IllegalArgumentException(file + " isn't a directory!");
-        if(!file.exists())
-            if(!file.mkdir())
-                throw new IllegalArgumentException("Can't create directory " + file + " !");
+        if(!file.exists() && !file.mkdir())
+            throw new IllegalArgumentException("Can't create directory " + file + " !");
 
         this.file = file;
         this.versionList = versionList;
@@ -99,6 +98,7 @@ final class VersionScannerThread extends Thread implements SubModule {
 
     /**
      * Handle all events excluding {@link StandardWatchEventKinds#OVERFLOW}
+     *
      * @param event the event
      */
     private void handleEvent(WatchEvent<Path> event) {
