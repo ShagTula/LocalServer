@@ -26,7 +26,6 @@ public final class VersioningModule implements Module {
         versionList = new VersionList();
         File scanFolder = XmlHelper.getFile("folder", element, true);
         scannerThread = new VersionScannerThread(scanFolder, versionList);
-        scannerThread.start();
 
         HttpServer httpServer = XmlHelper.getHttpServer("http-server", element, true);
         assert httpServer != null;
