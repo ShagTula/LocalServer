@@ -1,5 +1,6 @@
 package com.alesharik.localstorage.version;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,55 +26,60 @@ public class VersionListTest {
     }
 
     private VersionList list;
+    private File file;
 
     @Before
     public void setUp() throws Exception {
         list = new VersionList();
         PrintStream serrMock = mock(PrintStream.class);
         System.setErr(serrMock);
+
+        file = File.createTempFile("AlesharikWebServer", "sfd");
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        file.delete();
     }
 
     @Test
     public void testVersionEqualsLogic() throws Exception {
-        File mockFile = mock(File.class);
-        when(mockFile.delete()).thenReturn(true);
+        File spy = spy(file);
 
-        Version release1 = new Version(1, 2, 3, Version.Prefix.RELEASE, mockFile);
-        Version release2 = new Version(1, 2, 3, Version.Prefix.RELEASE, mockFile);
+        Version release1 = new Version(1, 2, 3, Version.Prefix.RELEASE, spy);
+        Version release2 = new Version(1, 2, 3, Version.Prefix.RELEASE, spy);
         list.addVersion(release1);
         list.addVersion(release2);
 
-        verify(mockFile, never()).delete();
+        verify(spy, never()).delete();
 
         assertTrue(list.contains(release1));
     }
 
     @Test
     public void testMajorLogic() throws Exception {
-        File mockFile = mock(File.class);
-        when(mockFile.delete()).thenReturn(true);
+        File spy = spy(file);
 
-        Version release1 = new Version(1, 0, 0, Version.Prefix.RELEASE, mockFile);
-        Version release2 = new Version(2, 0, 0, Version.Prefix.RELEASE, mockFile);
+        Version release1 = new Version(1, 0, 0, Version.Prefix.RELEASE, spy);
+        Version release2 = new Version(2, 0, 0, Version.Prefix.RELEASE, spy);
         list.addVersion(release1);
         list.addVersion(release2);
 
-        verify(mockFile, times(1)).delete();
+        verify(spy, times(1)).delete();
         assertFalse(list.contains(release1));
         assertTrue(list.contains(release2));
     }
 
     @Test
     public void testMajorLogicWithVersionNotApplied() throws Exception {
-        File mockFile = mock(File.class);
-        when(mockFile.delete()).thenReturn(true);
+        File spy = spy(file);
 
-        Version release1 = new Version(2, 0, 0, Version.Prefix.RELEASE, mockFile);
-        Version release2 = new Version(1, 0, 0, Version.Prefix.RELEASE, mockFile);
+        Version release1 = new Version(2, 0, 0, Version.Prefix.RELEASE, spy);
+        Version release2 = new Version(1, 0, 0, Version.Prefix.RELEASE, spy);
         list.addVersion(release1);
         list.addVersion(release2);
 
-        verify(mockFile, never()).delete();
+        verify(spy, never()).delete();
 
         assertTrue(list.contains(release1));
         assertFalse(list.contains(release2));
@@ -81,30 +87,28 @@ public class VersionListTest {
 
     @Test
     public void testMinorLogic() throws Exception {
-        File mockFile = mock(File.class);
-        when(mockFile.delete()).thenReturn(true);
+        File spy = spy(file);
 
-        Version release1 = new Version(1, 1, 0, Version.Prefix.RELEASE, mockFile);
-        Version release2 = new Version(1, 2, 0, Version.Prefix.RELEASE, mockFile);
+        Version release1 = new Version(1, 1, 0, Version.Prefix.RELEASE, spy);
+        Version release2 = new Version(1, 2, 0, Version.Prefix.RELEASE, spy);
         list.addVersion(release1);
         list.addVersion(release2);
 
-        verify(mockFile, times(1)).delete();
+        verify(spy, times(1)).delete();
         assertFalse(list.contains(release1));
         assertTrue(list.contains(release2));
     }
 
     @Test
     public void testMinorLogicWithVersionNotApplied() throws Exception {
-        File mockFile = mock(File.class);
-        when(mockFile.delete()).thenReturn(true);
+        File spy = spy(file);
 
-        Version release1 = new Version(1, 2, 0, Version.Prefix.RELEASE, mockFile);
-        Version release2 = new Version(1, 1, 0, Version.Prefix.RELEASE, mockFile);
+        Version release1 = new Version(1, 2, 0, Version.Prefix.RELEASE, spy);
+        Version release2 = new Version(1, 1, 0, Version.Prefix.RELEASE, spy);
         list.addVersion(release1);
         list.addVersion(release2);
 
-        verify(mockFile, never()).delete();
+        verify(spy, never()).delete();
 
         assertTrue(list.contains(release1));
         assertFalse(list.contains(release2));
@@ -112,30 +116,28 @@ public class VersionListTest {
 
     @Test
     public void testSnapshotLogic() throws Exception {
-        File mockFile = mock(File.class);
-        when(mockFile.delete()).thenReturn(true);
+        File spy = spy(file);
 
-        Version release1 = new Version(1, 1, 1, Version.Prefix.RELEASE, mockFile);
-        Version release2 = new Version(1, 1, 2, Version.Prefix.RELEASE, mockFile);
+        Version release1 = new Version(1, 1, 1, Version.Prefix.RELEASE, spy);
+        Version release2 = new Version(1, 1, 2, Version.Prefix.RELEASE, spy);
         list.addVersion(release1);
         list.addVersion(release2);
 
-        verify(mockFile, times(1)).delete();
+        verify(spy, times(1)).delete();
         assertFalse(list.contains(release1));
         assertTrue(list.contains(release2));
     }
 
     @Test
     public void testSnapshotLogicWithVersionNotApplied() throws Exception {
-        File mockFile = mock(File.class);
-        when(mockFile.delete()).thenReturn(true);
+        File spy = spy(file);
 
-        Version release1 = new Version(1, 1, 2, Version.Prefix.RELEASE, mockFile);
-        Version release2 = new Version(1, 1, 1, Version.Prefix.RELEASE, mockFile);
+        Version release1 = new Version(1, 1, 2, Version.Prefix.RELEASE, spy);
+        Version release2 = new Version(1, 1, 1, Version.Prefix.RELEASE, spy);
         list.addVersion(release1);
         list.addVersion(release2);
 
-        verify(mockFile, never()).delete();
+        verify(spy, never()).delete();
 
         assertTrue(list.contains(release1));
         assertFalse(list.contains(release2));
@@ -144,10 +146,10 @@ public class VersionListTest {
     @SuppressWarnings("ComparatorMethodParameterNotUsed")
     @Test
     public void testNightlyBuildLogic() throws Exception {
-        File mockFile = mock(File.class);
+        File spy = spy(file);
         Version[] versions = new Version[16];
         for(int i = 0; i < versions.length; i++) {
-            versions[i] = new Version(i, 0, 0, Version.Prefix.NIGHTLY, mockFile);
+            versions[i] = new Version(i, 0, 0, Version.Prefix.NIGHTLY, spy);
         }
         Version first = versions[0];
 
@@ -157,7 +159,7 @@ public class VersionListTest {
             list.addVersion(version);
 
         assertFalse(list.contains(first));
-        verify(mockFile, times(1)).delete();
+        verify(spy, times(1)).delete();
 
         for(Version version : versions) {
             if(version != first)
@@ -174,28 +176,28 @@ public class VersionListTest {
 
     @Test
     public void testOutdatedVersionsLogic() throws Exception {
-        File mockFile = mock(File.class);
+        File spy = spy(file);
 
-        Version release1 = new Version(1, 0, 0, Version.Prefix.RELEASE, mockFile);
+        Version release1 = new Version(1, 0, 0, Version.Prefix.RELEASE, spy);
 
         list.addVersion(release1);
 
         for(int i = 0; i < 10; i++) {
-            list.addVersion(new Version(1, 1, i, Version.Prefix.STAGING, mockFile));
+            list.addVersion(new Version(1, 1, i, Version.Prefix.STAGING, spy));
         }
 
-        Version release2 = new Version(2, 0, 0, Version.Prefix.RELEASE, mockFile);
+        Version release2 = new Version(2, 0, 0, Version.Prefix.RELEASE, spy);
         list.addVersion(release2);
 
-        verify(mockFile, times(11)).delete();
+        verify(spy, times(11)).delete();
         assertEquals(1, list.size());
         assertTrue(list.contains(release2));
     }
 
     @Test
     public void testAddRemove() throws Exception {
-        File mock = mock(File.class);
-        Version v = new Version(2, 0, 0, Version.Prefix.RELEASE, mock);
+        File spy = spy(file);
+        Version v = new Version(2, 0, 0, Version.Prefix.RELEASE, spy);
         assertTrue(list.isEmpty());
 
         list.addVersion(v);
@@ -203,12 +205,12 @@ public class VersionListTest {
 
         list.deleteVersion(v);
         assertTrue(list.isEmpty());
-        verify(mock, times(1)).delete();
+        verify(spy, times(1)).delete();
     }
 
     @Test
     public void testGetRelease() throws Exception {
-        Version version = new Version(2, 0, 0, Version.Prefix.RELEASE, mock(File.class));
+        Version version = new Version(2, 0, 0, Version.Prefix.RELEASE, file);
         assertNull(list.getRelease());
         list.addVersion(version);
         assertEquals(version, list.getRelease());
@@ -216,10 +218,10 @@ public class VersionListTest {
 
     @Test
     public void testInsertDifferentPrefixes() throws Exception {
-        Version version1 = new Version(2, 0, 0, Version.Prefix.RELEASE, mock(File.class));
-        Version version2 = new Version(2, 1, 0, Version.Prefix.STAGING, mock(File.class));
-        Version version3 = new Version(2, 1, 1, Version.Prefix.UNSTABLE, mock(File.class));
-        Version version4 = new Version(2, 1, 2, Version.Prefix.NIGHTLY, mock(File.class));
+        Version version1 = new Version(2, 0, 0, Version.Prefix.RELEASE, file);
+        Version version2 = new Version(2, 1, 0, Version.Prefix.STAGING, file);
+        Version version3 = new Version(2, 1, 1, Version.Prefix.UNSTABLE, file);
+        Version version4 = new Version(2, 1, 2, Version.Prefix.NIGHTLY, file);
 
         list.addVersion(version1);
         list.addVersion(version2);
@@ -235,14 +237,14 @@ public class VersionListTest {
     @SuppressWarnings("ComparatorMethodParameterNotUsed")
     @Test
     public void testGetVersions() throws Exception {
-        File file = mock(File.class);
+        File spy = spy(file);
 
         Version[] versions = new Version[64];
         for(int i = 0; i < versions.length; i += 4) {
-            versions[i] = new Version(i, i, i, Version.Prefix.RELEASE, file);
-            versions[i + 1] = new Version(i, i + 1, i, Version.Prefix.STAGING, file);
-            versions[i + 2] = new Version(i, i + 1, i + 1, Version.Prefix.UNSTABLE, file);
-            versions[i + 3] = new Version(i, i + 1, i + 2, Version.Prefix.NIGHTLY, file);
+            versions[i] = new Version(i, i, i, Version.Prefix.RELEASE, spy);
+            versions[i + 1] = new Version(i, i + 1, i, Version.Prefix.STAGING, spy);
+            versions[i + 2] = new Version(i, i + 1, i + 1, Version.Prefix.UNSTABLE, spy);
+            versions[i + 3] = new Version(i, i + 1, i + 2, Version.Prefix.NIGHTLY, spy);
         }
 
         Arrays.sort(versions, (o1, o2) -> RAND.nextInt());

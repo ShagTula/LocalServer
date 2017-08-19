@@ -54,7 +54,7 @@ public final class Version implements Serializable, Comparable<Version> {
         });
     }
 
-    private Version(int majorVersion, int minorVersion, int snapshotVersion, Prefix prefix) {
+    public Version(int majorVersion, int minorVersion, int snapshotVersion, Prefix prefix) {
         this.majorVersion = majorVersion;
         this.minorVersion = minorVersion;
         this.snapshotVersion = snapshotVersion;

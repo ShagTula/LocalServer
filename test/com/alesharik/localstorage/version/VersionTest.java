@@ -5,15 +5,22 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
+import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VersionTest {
-    private static final File fake = new File("");
+    private static final File fake;
+
+    static {
+        try {
+            fake = File.createTempFile("AlesharikWebServer", "asdf");
+            fake.deleteOnExit();
+        } catch (IOException e) {
+            throw new Error(e);
+        }
+    }
 
     @Test
     public void testMajorCompare() throws Exception {
@@ -41,7 +48,8 @@ public class VersionTest {
 
     @Test
     public void parseTest() throws Exception {
-        File file = mock(File.class);
+        File file = File.createTempFile("AlesharikWebServer", "adsf");
+        file.deleteOnExit();
         Version version = Version.fromVersionString("1-2-3_R", file);
         assertEquals(1, version.getMajorVersion());
         assertEquals(2, version.getMinorVersion());
@@ -52,13 +60,13 @@ public class VersionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void parseIllegalStringTest() throws Exception {
-        assertNull(Version.fromVersionString("1-2-3-R", mock(File.class)));
+        assertNull(Version.fromVersionString("1-2-3-R"));
         fail();
     }
 
     @Test
     public void toVersionStringTest() throws Exception {
-        Version version = new Version(1, 2, 3, Version.Prefix.STAGING, mock(File.class));
+        Version version = new Version(1, 2, 3, Version.Prefix.STAGING);
         assertEquals("1-2-3_S", version.toVersionString());
     }
 
